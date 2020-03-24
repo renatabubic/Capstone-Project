@@ -16,7 +16,7 @@ export default class Level1 extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(0, 0,"sky").setScale(5);
+    this.add.image(0, 0, "sky").setScale(5);
     const self = this;
     this.socket = io();
     this.otherPlayers = this.physics.add.group();
@@ -51,7 +51,12 @@ export default class Level1 extends Phaser.Scene {
     const tileset = map.addTilesetImage("largepacmanmap", "largepacmanmap");
     //creates the map layer, key must match layer name in tiled
     this.layer = map.createStaticLayer("mapBaseLayer", tileset, 0, 0);
-    this.collisionLayer = map.createStaticLayer("collisions layer", tileset, 0, 0);
+    this.collisionLayer = map.createStaticLayer(
+      "collisions layer",
+      tileset,
+      0,
+      0
+    );
 
     //adds a yellow pacman player and makes him smaller
     // this.yellowplayer = this.physics.add.sprite(300, 200, "pacYellow", 7);
@@ -61,10 +66,12 @@ export default class Level1 extends Phaser.Scene {
     // this.physics.add.collider(this.yellowplayer, this.collisionLayer);
     this.collisionLayer.setCollisionByProperty({ collision: true });
 
-    this.layer.setScale(window.innerWidth/1920, window.innerHeight/972);
-    this.collisionLayer.setScale(window.innerWidth/1920, window.innerHeight/972);
+    this.layer.setScale(window.innerWidth / 1920, window.innerHeight / 972);
+    this.collisionLayer.setScale(
+      window.innerWidth / 1920,
+      window.innerHeight / 972
+    );
     // this.yellowplayer.setScale(window.innerWidth/window.innerHeight);
-
 
     //sprite movement yellow pacman
     this.anims.create({
@@ -116,46 +123,83 @@ export default class Level1 extends Phaser.Scene {
     });
   }
   update() {
-
-    this.layer.setScale(window.innerWidth/1920, window.innerHeight/972);
-    this.collisionLayer.setScale(window.innerWidth/1920, window.innerHeight/972);
+    this.layer.setScale(window.innerWidth / 1920, window.innerHeight / 972);
+    this.collisionLayer.setScale(
+      window.innerWidth / 1920,
+      window.innerHeight / 972
+    );
 
     if (this.pac) {
-      this.pac.setScale(0.91 * (window.innerWidth/window.innerHeight));
+      this.pac.setScale(0.91 * (window.innerWidth / window.innerHeight));
       if (this.cursors.up.isDown) {
-        this.pac.setVelocityY(-180);
+        this.pac.setY(this.pac.y - 3);
         this.pac.anims.play("up", true);
+        this.socket.emit("moveUp", { dir: "up" });
       }
       if (this.cursors.down.isDown) {
-        this.pac.setVelocityY(180);
+        this.pac.setY(this.pac.y + 3);
         this.pac.anims.play("down", true);
+        this.socket.emit("moveDown", { dir: "down" });
       }
       if (this.cursors.left.isDown) {
-        this.pac.setVelocityX(-180);
+        this.pac.setX(this.pac.x - 3);
         this.pac.anims.play("left", true);
+        this.socket.emit("moveLeft", { dir: "left" });
       }
       if (this.cursors.right.isDown) {
-        this.pac.setVelocityX(180);
+        this.pac.setX(this.pac.x + 3);
         this.pac.anims.play("right", true);
+        this.socket.emit("moveRight", { dir: "right" });
       }
-      let x = this.pac.x;
-      let y = this.pac.y;
-      if (
-        this.pac.oldPosition &&
-        (x !== this.pac.oldPosition.x || y !== this.pac.oldPosition.y)
-      ) {
-        this.socket.emit("playerMovement", { x: this.pac.x, y: this.pac.y });
-      }
-      this.pac.oldPosition = {
-        x: this.pac.x,
-        y: this.pac.y
-      };
+      this.socket.on("playerMovedUp", playerInfo => {
+        console.log("in playermovedupcs");
+        this.otherPlayers.getChildren().forEach(otherPlayer => {
+          if (playerInfo.playerId === otherPlayer.playerId) {
+            otherPlayer.setY(otherPlayer.y - 3);
+            console.log(otherPlayer.y);
+            otherPlayer.anims.play("up", true);
+          }
+        });
+      });
+      this.socket.on("playerMovedDOwn", playerInfo => {
+        console.log("in playermoveddowncs");
+        this.otherPlayers.getChildren().forEach(otherPlayer => {
+          if (playerInfo.playerId === otherPlayer.playerId) {
+            otherPlayer.setY(otherPlayer.y + 3);
+            console.log(otherPlayer.y);
+            otherPlayer.anims.play("up", true);
+          }
+        });
+      });
+      this.socket.on("playerMovedLeft", playerInfo => {
+        console.log("in playermovedleftcs");
+        this.otherPlayers.getChildren().forEach(otherPlayer => {
+          if (playerInfo.playerId === otherPlayer.playerId) {
+            otherPlayer.setX(otherPlayer.x - 3);
+            console.log(otherPlayer.x);
+            otherPlayer.anims.play("left", true);
+          }
+        });
+      });
+
+      // let x = this.pac.x;
+      // let y = this.pac.y;
+      // if (
+      //   this.pac.oldPosition &&
+      //   (x !== this.pac.oldPosition.x || y !== this.pac.oldPosition.y)
+      // ) {
+      //   this.socket.emit("playerMovement", { x: this.pac.x, y: this.pac.y });
+      // }
+      // this.pac.oldPosition = {
+      //   x: this.pac.x,
+      //   y: this.pac.y
+      // };
     }
   }
 }
 function addPlayer(self, playerInfo) {
   self.pac = self.physics.add.sprite(playerInfo.x, playerInfo.y, "pacYellow");
-  self.pac.setScale(window.innerWidth/window.innerHeight);
+  self.pac.setScale(window.innerWidth / window.innerHeight);
   self.physics.add.collider(self.pac, self.collisionLayer);
   self.physics.add.collider(self.pac, self.otherPlayers);
 }

@@ -26,6 +26,23 @@ io.on("connection", socket => {
     delete players[socket.id];
     io.emit("disconnect", socket.id);
   });
+  socket.on("moveUp", directionObj => {
+    console.log("inmoveUp");
+    socket.broadcast.emit("playerMoved", players[socket.id]);
+  });
+  socket.on("moveDown", directionObj => {
+    console.log("inmoveDown");
+    socket.broadcast.emit("playerMoved", players[socket.id]);
+  });
+  socket.on("moveLeft", directionObj => {
+    console.log("inmoveLeft");
+    socket.broadcast.emit("playerMoved", players[socket.id]);
+  });
+  socket.on("moveRight", directionObj => {
+    console.log("inmoveRight");
+    socket.broadcast.emit("playerMoved", players[socket.id]);
+  });
+
   socket.on("playerMovement", movementData => {
     players[socket.id].x = movementData.x;
     players[socket.id].y = movementData.y;
