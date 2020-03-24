@@ -28,26 +28,30 @@ io.on("connection", socket => {
   });
   socket.on("moveUp", directionObj => {
     console.log("inmoveUp");
+    players[socket.id].y = players[socket.id].y - 3;
     socket.broadcast.emit("playerMoved", players[socket.id]);
   });
   socket.on("moveDown", directionObj => {
     console.log("inmoveDown");
+    players[socket.id].y = players[socket.id].y + 3;
     socket.broadcast.emit("playerMoved", players[socket.id]);
   });
   socket.on("moveLeft", directionObj => {
     console.log("inmoveLeft");
+    players[socket.id].x = players[socket.id].x - 3;
     socket.broadcast.emit("playerMoved", players[socket.id]);
   });
   socket.on("moveRight", directionObj => {
     console.log("inmoveRight");
+    players[socket.id].x = players[socket.id].x + 3;
     socket.broadcast.emit("playerMoved", players[socket.id]);
   });
 
-  socket.on("playerMovement", movementData => {
-    players[socket.id].x = movementData.x;
-    players[socket.id].y = movementData.y;
-    socket.broadcast.emit("playerMoved", players[socket.id]);
-  });
+  // socket.on("playerMovement", movementData => {
+  //   players[socket.id].x = movementData.x;
+  //   players[socket.id].y = movementData.y;
+  //   socket.broadcast.emit("playerMoved", players[socket.id]);
+  // });
 });
 const PORT = 8080;
 server.listen(PORT, () => {
