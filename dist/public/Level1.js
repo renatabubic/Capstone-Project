@@ -203,8 +203,12 @@ export default class Level1 extends Phaser.Scene {
 function addPlayer(self, playerInfo) {
   self.pac = self.physics.add.sprite(playerInfo.x, playerInfo.y, "pacYellow");
   self.pac.setScale(window.innerWidth / window.innerHeight);
-  self.physics.add.collider(self.pac, self.collisionLayer);
-  self.physics.add.collider(self.pac, self.otherPlayers);
+  self.physics.add.collider(self.pac, self.collisionLayer, () => {
+    console.log("world collision");
+  });
+  self.physics.add.collider(self.pac, self.otherPlayers, () => {
+    console.log("sprite collision ");
+  });
 }
 function addOtherPlayers(self, playerInfo) {
   const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, "pacYellow");
