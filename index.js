@@ -26,25 +26,29 @@ io.on("connection", socket => {
     delete players[socket.id];
     io.emit("disconnect", socket.id);
   });
-  socket.on("moveUp", directionObj => {
+  socket.on("moveUp", () => {
     console.log("inmoveUp");
     players[socket.id].y = players[socket.id].y - 3;
     socket.broadcast.emit("playerMoved", players[socket.id]);
+    socket.broadcast.emit("movedUp", players[socket.id]);
   });
-  socket.on("moveDown", directionObj => {
+  socket.on("moveDown", () => {
     console.log("inmoveDown");
     players[socket.id].y = players[socket.id].y + 3;
     socket.broadcast.emit("playerMoved", players[socket.id]);
+    socket.broadcast.emit("movedDown", players[socket.id]);
   });
-  socket.on("moveLeft", directionObj => {
+  socket.on("moveLeft", () => {
     console.log("inmoveLeft");
     players[socket.id].x = players[socket.id].x - 3;
     socket.broadcast.emit("playerMoved", players[socket.id]);
+    socket.broadcast.emit("movedLeft", players[socket.id]);
   });
-  socket.on("moveRight", directionObj => {
+  socket.on("moveRight", () => {
     console.log("inmoveRight");
     players[socket.id].x = players[socket.id].x + 3;
     socket.broadcast.emit("playerMoved", players[socket.id]);
+    socket.broadcast.emit("movedRight", players[socket.id]);
   });
 
   // socket.on("playerMovement", movementData => {

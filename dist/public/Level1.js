@@ -151,33 +151,36 @@ export default class Level1 extends Phaser.Scene {
         this.pac.anims.play("right", true);
         this.socket.emit("moveRight", { dir: "right" });
       }
-      this.socket.on("playerMovedUp", playerInfo => {
+      //on receive move informtaion for other players
+      this.socket.on("movedUp", playerInfo => {
         console.log("in playermovedupcs");
         this.otherPlayers.getChildren().forEach(otherPlayer => {
           if (playerInfo.playerId === otherPlayer.playerId) {
-            otherPlayer.setY(otherPlayer.y - 3);
-            console.log(otherPlayer.y);
             otherPlayer.anims.play("up", true);
           }
         });
       });
-      this.socket.on("playerMovedDOwn", playerInfo => {
+      this.socket.on("movedDown", playerInfo => {
         console.log("in playermoveddowncs");
         this.otherPlayers.getChildren().forEach(otherPlayer => {
           if (playerInfo.playerId === otherPlayer.playerId) {
-            otherPlayer.setY(otherPlayer.y + 3);
-            console.log(otherPlayer.y);
-            otherPlayer.anims.play("up", true);
+            otherPlayer.anims.play("down", true);
           }
         });
       });
-      this.socket.on("playerMovedLeft", playerInfo => {
+      this.socket.on("movedLeft", playerInfo => {
         console.log("in playermovedleftcs");
         this.otherPlayers.getChildren().forEach(otherPlayer => {
           if (playerInfo.playerId === otherPlayer.playerId) {
-            otherPlayer.setX(otherPlayer.x - 3);
-            console.log(otherPlayer.x);
             otherPlayer.anims.play("left", true);
+          }
+        });
+      });
+      this.socket.on("movedRight", playerInfo => {
+        console.log("in playermovedrightcs");
+        this.otherPlayers.getChildren().forEach(otherPlayer => {
+          if (playerInfo.playerId === otherPlayer.playerId) {
+            otherPlayer.anims.play("right", true);
           }
         });
       });
