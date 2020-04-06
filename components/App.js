@@ -64,6 +64,8 @@ class App extends React.Component {
       games.doc(code).set({ players: allPlayers }, { merge: true });
       this.setState({
         name: "",
+        buttonClickedName: "create",
+        code,
         players: allPlayers,
       });
     });
@@ -82,6 +84,7 @@ class App extends React.Component {
 
     socket.emit("joinRoom", code, name);
     socket.on("invalidRoom", (roomId) => {
+      console.log("inside invalidRoom");
       alert(`Sorry, game room: ${roomId} not found`);
       this.setState({ buttonClickedName: "join" });
     });
@@ -302,41 +305,29 @@ class App extends React.Component {
                       {this.state.alertCopied ? <span>*COPIED*</span> : null}
                     </div>
                   </div>
-                  <div>
-                    <button
-                      type="submit"
-                      className="enter-game-button"
-                      onClick={() => {
-                        this.state.code;
-                        this.createGame();
-                        close();
-                      }}
-                    >
-                      Enter Game Room
-                    </button>
-                    <button
-                      className="back-button"
-                      type="submit"
-                      onClick={() => {
-                        games.doc(state.code).delete();
-                        this.setState({
-                          buttonClicked: true,
-                          buttonClickedName: "",
-                          players: {},
-                        });
-                      }}
-                      open={false}
-                    >
-                      GO BACKgit
-                    </button>
-                  </div>
-                  <div id="creator-p-text">
-                    <p>
-                      **You MUST ENTER <br />
-                      the game room for <br />
-                      your friends to join**
-                    </p>
-                  </div>
+                  <button
+                    className="enter-game-button"
+                    onClick={() => {
+                      close();
+                    }}
+                  >
+                    Enter Game Room
+                  </button>
+                  <button
+                    className="enter-game-button"
+                    type="submit"
+                    onClick={() => {
+                      games.doc(state.code).delete();
+                      this.setState({
+                        buttonClicked: true,
+                        buttonClickedName: "",
+                        players: {},
+                      });
+                    }}
+                    open={false}
+                  >
+                    GO BACK
+                  </button>
                 </div>
               )}
             </Popup>
